@@ -1,4 +1,19 @@
-const words = ["javascript", "html", "css", "python", "react", "node"];
+const words = [
+  "banana", "elefante", "montanha", "oceano", "computador", "aventura",
+  "programação", "desenvolvimento", "futebol", "viagem", "escola", "amor",
+  "guitarra", "piano", "cachorro", "gato", "família", "feliz",
+  "alegria", "trabalho", "escritório", "chocolate", "fotografia", "lua",
+  "sol", "estrela", "jardim", "inverno", "verão", "outono",
+  "primavera", "televisão", "filme", "arte", "música", "livro",
+  "aventura", "ciência", "história", "geografia", "matemática", "química",
+  "biologia", "pintura", "escultura", "abacaxi", "melancia", "kiwi",
+  "câmera", "tecnologia", "internet", "esportes", "carro", "avião",
+  "navio", "cidade", "floresta", "montanha-russa", "circo", "festival",
+  "espelho", "relógio", "cozinha", "jantar", "violinista", "atleta",
+  "pintor", "dançarino", "professor", "aluno", "cientista", "explorador",
+  "telefone", "teclado", "mouse", "hamburguer", "pizza", "sorvete",
+  "teatro", "drama", "comédia", "doutor", "enfermeira", "paciente"
+];
 
 let selectedWord, guessedWord, wrongLetters;
 
