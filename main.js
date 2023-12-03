@@ -1,28 +1,102 @@
 const words = [
-  "banana", "elefante", "montanha", "oceano", "computador", "aventura",
-  "programação", "desenvolvimento", "futebol", "viagem", "escola", "amor",
-  "guitarra", "piano", "cachorro", "gato", "família", "feliz",
-  "alegria", "trabalho", "escritório", "chocolate", "fotografia", "lua",
-  "sol", "estrela", "jardim", "inverno", "verão", "outono",
-  "primavera", "televisão", "filme", "arte", "música", "livro",
-  "aventura", "ciência", "história", "geografia", "matemática", "química",
-  "biologia", "pintura", "escultura", "abacaxi", "melancia", "kiwi",
-  "câmera", "tecnologia", "internet", "esportes", "carro", "avião",
-  "navio", "cidade", "floresta", "montanha-russa", "circo", "festival",
-  "espelho", "relógio", "cozinha", "jantar", "violinista", "atleta",
-  "pintor", "dançarino", "professor", "aluno", "cientista", "explorador",
-  "telefone", "teclado", "mouse", "hamburguer", "pizza", "sorvete",
-  "teatro", "drama", "comédia", "doutor", "enfermeira", "paciente"
+  "banana",
+  "elefante",
+  "montanha",
+  "oceano",
+  "computador",
+  "aventura",
+  "programação",
+  "desenvolvimento",
+  "futebol",
+  "viagem",
+  "escola",
+  "amor",
+  "guitarra",
+  "piano",
+  "cachorro",
+  "gato",
+  "família",
+  "feliz",
+  "alegria",
+  "trabalho",
+  "escritório",
+  "chocolate",
+  "fotografia",
+  "lua",
+  "sol",
+  "estrela",
+  "jardim",
+  "inverno",
+  "verão",
+  "outono",
+  "primavera",
+  "televisão",
+  "filme",
+  "arte",
+  "música",
+  "livro",
+  "aventura",
+  "ciência",
+  "história",
+  "geografia",
+  "matemática",
+  "química",
+  "biologia",
+  "pintura",
+  "escultura",
+  "abacaxi",
+  "melancia",
+  "kiwi",
+  "câmera",
+  "tecnologia",
+  "internet",
+  "esportes",
+  "carro",
+  "avião",
+  "navio",
+  "cidade",
+  "floresta",
+  "montanha-russa",
+  "circo",
+  "festival",
+  "espelho",
+  "relógio",
+  "cozinha",
+  "jantar",
+  "violinista",
+  "atleta",
+  "pintor",
+  "dançarino",
+  "professor",
+  "aluno",
+  "cientista",
+  "explorador",
+  "telefone",
+  "teclado",
+  "mouse",
+  "hamburguer",
+  "pizza",
+  "sorvete",
+  "teatro",
+  "drama",
+  "comédia",
+  "doutor",
+  "enfermeira",
+  "paciente",
 ];
 
-let selectedWord, guessedWord, wrongLetters;
+let selectedWord, guessedWord, wrongLetters, selectedWordNormalized;
 
 function initializeGame() {
   selectedWord = chooseRandomWord();
   guessedWord = Array.from(selectedWord).fill("_");
   wrongLetters = [];
+  selectedWordNormalized = selectedWord
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
   displayWord();
+  showErros();
   createKeyboard();
 
   document.addEventListener("keydown", handleKeyEvent);
@@ -41,9 +115,15 @@ function displayElementContent(elementId, content) {
   element.textContent = content;
 }
 
+function showErros() {
+  displayElementContent("wrongs", 6 - wrongLetters.length)
+}
+
 function displayWord() {
   displayElementContent("word-container", guessedWord.join(" "));
 }
+
+
 
 function handleKeyEvent(event) {
   const letter = event.key.toLowerCase();
@@ -69,12 +149,13 @@ function updateGameStatus(letter) {
     return;
   }
 
-  for (let i = 0; i < selectedWord.length; i++) {
-    if (selectedWord[i] === letter) {
-      guessedWord[i] = letter;
+  for (let i = 0; i < selectedWordNormalized.length; i++) {
+    if (selectedWordNormalized[i] === letter) {
+      guessedWord[i] = selectedWord[i];
     }
   }
 
+  showErros();
   displayWord();
 }
 
@@ -113,7 +194,7 @@ function checkLetterPress(letter) {
 
   keyboardButtons.forEach((button) => {
     if (button.textContent === letter) {
-      if (guessedWord.includes(letter)) {
+      if (selectedWordNormalized.includes(letter)) {
         button.classList.add("correct-letter");
       } else {
         button.classList.add("wrong-letter");
