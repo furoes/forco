@@ -85,15 +85,16 @@ const words = [
   "paciente",
 ];
 
-let selectedWord, guessedWord, wrongLetters, selectedWordNormalized;
+let selectedWord, guessedWord, wrongLetters, selectedWordNormalized, maxErrors;
 
 function initializeGame() {
   selectedWord = chooseRandomWord();
-  guessedWord = Array.from(selectedWord).fill("_");
+  guessedWord = Array.from(selectedWord).map((char) =>
+    char === "-" ? char : "_"
+  );
   wrongLetters = [];
-  selectedWordNormalized = selectedWord
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  selectedWordNormalized = normalizeWord(selectedWord);
+  maxErrors = 10;
 
   displayWord();
   showErros();
@@ -106,6 +107,10 @@ function chooseRandomWord() {
   return words[Math.floor(Math.random() * words.length)];
 }
 
+function normalizeWord(word) {
+  return word.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
+
 function isLetterKey(key) {
   return /^[a-zA-Z]$/.test(key);
 }
@@ -116,14 +121,12 @@ function displayElementContent(elementId, content) {
 }
 
 function showErros() {
-  displayElementContent("wrongs", 6 - wrongLetters.length)
+  displayElementContent("wrongs", maxErrors - wrongLetters.length);
 }
 
 function displayWord() {
   displayElementContent("word-container", guessedWord.join(" "));
 }
-
-
 
 function handleKeyEvent(event) {
   const letter = event.key.toLowerCase();
@@ -135,7 +138,10 @@ function handleKeyEvent(event) {
   updateGameStatus(letter);
   checkLetterPress(letter);
 
-  if (guessedWord.join("") === selectedWord || wrongLetters.length === 6) {
+  if (
+    guessedWord.join("") === selectedWord ||
+    wrongLetters.length === maxErrors
+  ) {
     endGame();
   }
 }
@@ -161,16 +167,17 @@ function updateGameStatus(letter) {
 
 function endGame() {
   document.removeEventListener("keydown", handleKeyEvent);
+  setTimeout(restartGame, 500);
+}
 
-  setTimeout(() => {
-    if (guessedWord.join("") === selectedWord) {
-      alert(`Parabéns! Você ganhou!`);
-    } else {
-      alert(`Você perdeu! A palavra era: ${selectedWord}`);
-    }
+function restartGame() {
+  const mensagem =
+    guessedWord.join("") === selectedWord
+      ? "Parabéns! Você ganhou!"
+      : `Você perdeu! A palavra era: ${selectedWord}`;
 
-    initializeGame();
-  }, 500);
+  alert(mensagem);
+  initializeGame();
 }
 
 function createKeyboard() {
@@ -211,10 +218,12 @@ function handleKeyboardClick(letter) {
   }
 
   updateGameStatus(letter);
-
   checkLetterPress(letter);
 
-  if (guessedWord.join("") === selectedWord || wrongLetters.length === 6) {
+  if (
+    guessedWord.join("") === selectedWord ||
+    wrongLetters.length === maxErrors
+  ) {
     endGame();
   }
 }
