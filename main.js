@@ -94,7 +94,7 @@ function initializeGame() {
   );
   wrongLetters = [];
   selectedWordNormalized = normalizeWord(selectedWord);
-  maxErrors = 10;
+  maxErrors = 8;
 
   displayWord();
   showErros();
@@ -180,6 +180,10 @@ function restartGame() {
   initializeGame();
 }
 
+initializeGame();
+
+// Keyboard
+
 function createKeyboard() {
   const keyboardContainer = document.getElementById("keyboard-container");
   keyboardContainer.innerHTML = "";
@@ -188,6 +192,7 @@ function createKeyboard() {
 
   alphabet.split("").forEach((letter) => {
     const button = document.createElement("button");
+    button.className = "key"
     button.textContent = letter;
     button.addEventListener("click", () => handleKeyboardClick(letter));
     keyboardContainer.appendChild(button);
@@ -228,5 +233,30 @@ function handleKeyboardClick(letter) {
   }
 }
 
-initializeGame();
 document.addEventListener("keydown", handleKeyEvent);
+
+// Help Dialog
+const helpButton = document.querySelector("#btn-help");
+const helpDialog = document.querySelector("#dlg-help");
+const helpClose = document.querySelector("#btn-help-close");
+
+helpButton.addEventListener("click", () => {
+  helpDialog.showModal();
+});
+
+helpClose.addEventListener("click", () => {
+  helpDialog.close();
+});
+
+// Config Dialog
+const configButton = document.querySelector("#btn-config");
+const configDialog = document.querySelector("#dlg-config");
+const configClose = document.querySelector("#btn-config-close");
+
+configButton.addEventListener("click", () => {
+  configDialog.showModal();
+});
+
+configClose.addEventListener("click", () => {
+  configDialog.close();
+});
