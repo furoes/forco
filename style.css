@@ -28,8 +28,11 @@ body {
 }
 
 .key {
-  width: 50px;
-  height: 50px;
+  width: auto;
+  height: auto;
+  min-width: 3rem;
+  min-height: 3rem;
+  padding: 1rem;
   font-size: 18px;
   cursor: pointer;
   background-color: #efe9db;
@@ -84,7 +87,7 @@ body {
   background-color: #fff;
   border: 2px solid #000000;
 
-  min-height: 500px;
+  max-height: 500px;
   max-width: 400px;
 
   padding: 20px;
@@ -99,8 +102,57 @@ body {
 
 .dlg p {
   padding: 1em;
+  text-align: left;
 }
 
 .dlg .preference {
   padding: 10px;
 }
+
+.dlg {
+  background-color:#efe9db;;
+}
+
+/* 
+        <div class="preference">
+            <label for="tentativas">Número de Tentativas:</label>
+            <input type="number" id="tentativas" value="6" min="1" max="10">
+        </div>
+ */
+
+/* Styles for the input element */
+
+#tentativas {
+  width: 2.5rem;
+  outline: none;
+  border: none;
+  background-color: #efe9db;
+  color: #2e2d2a;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid #000000;
+  border-radius: 6px;
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  transition: background-color 0.3s;
+}
+
+
+select {
+  outline: none;
+  border: none;
+  background-color: #efe9db;
+  color: #2e2d2a;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid #000000;
+  border-radius: 6px;
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  transition: background-color 0.3s;
+}
+
+
+
+
+
+
+
