@@ -113,15 +113,6 @@ body {
   background-color:#efe9db;;
 }
 
-/* 
-        <div class="preference">
-            <label for="tentativas">Número de Tentativas:</label>
-            <input type="number" id="tentativas" value="6" min="1" max="10">
-        </div>
- */
-
-/* Styles for the input element */
-
 #tentativas {
   width: 2.5rem;
   outline: none;
@@ -136,7 +127,6 @@ body {
   transition: background-color 0.3s;
 }
 
-
 select {
   outline: none;
   border: none;
@@ -149,10 +139,3 @@ select {
   box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
   transition: background-color 0.3s;
 }
-
-
-
-
-
-
-
