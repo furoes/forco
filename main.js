@@ -22,25 +22,25 @@ function initializeGame() {
 
 function getDays() {
   const epoch = Temporal.PlainDate.from({ year: 2020, month: 1, day: 1 });
-  const today = Temporal.Now.instant().toZonedDateTimeISO('UTC').toPlainDate()
+  const today = Temporal.Now.instant().toZonedDateTimeISO("UTC").toPlainDate();
 
-  return today.since(epoch).days
+  return today.since(epoch).days;
 }
 
 function mulberry32(a) {
-  return function() {
-    var t = a += 0x6D2B79F5;
-    t = Math.imul(t ^ t >>> 15, t | 1);
-    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  }
+  return function () {
+    var t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
 function chooseRandomWord() {
   const MAX_INT32 = 2147483647;
-  const random = mulberry32(getDays())()
+  const random = mulberry32(getDays())();
 
-  return words[Math.floor(random * MAX_INT32 %  words.length)];
+  return words[Math.floor((random * MAX_INT32) % words.length)];
 }
 
 function normalizeWord(word) {
@@ -116,8 +116,6 @@ function restartGame() {
   initializeGame();
 }
 
-initializeGame();
-
 function createKeyboard() {
   const keyboardContainer = document.getElementById("keyboard-container");
   keyboardContainer.innerHTML = "";
@@ -126,7 +124,7 @@ function createKeyboard() {
 
   alphabet.split("").forEach((letter) => {
     const button = document.createElement("button");
-    button.className = "key"
+    button.className = "key";
     button.textContent = letter;
     button.addEventListener("click", () => handleKeyboardClick(letter));
     keyboardContainer.appendChild(button);
@@ -180,3 +178,5 @@ helpButton.addEventListener("click", () => {
 helpClose.addEventListener("click", () => {
   helpDialog.close();
 });
+
+initializeGame();
