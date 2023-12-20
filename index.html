@@ -17,7 +17,7 @@
         <nav class="navbar">
             <button id="btn-help" class="key">?</button>
             <h1 class="title">Forco</h1>
-            <button id="btn-config" class="key">0</button>
+            <a href="https://github.com/furoes/forco">github</a>
         </nav>
 
         <p>erros: <span id="wrongs"></span></p>
@@ -33,27 +33,6 @@
             estiver, é marcada em vermelho.
         </p>
         <button autofocus id="btn-help-close" class="key">Fechar</button>
-    </dialog>
-
-    <dialog id="dlg-config" class="dlg">
-        <h2>Configurações</h2>
-
-        <div class="preference">
-            <label for="tentativas">Número de Tentativas:</label>
-            <input type="number" id="tentativas" value="6" min="1" max="10">
-        </div>
-
-        <div class="preference">
-            <label for="dificuldade">Dificuldade:</label>
-            <select id="dificuldade">
-                <option value="facil">Fácil</option>
-                <option value="medio" selected>Médio</option>
-                <option value="dificil">Difícil</option>
-            </select>
-        </div>
-
-        <button id="btn-config-save" class="key">Salvar</button>
-        <button autofocus id="btn-config-close" class="key">Fechar</button>
     </dialog>
 
     <section id="game-section">

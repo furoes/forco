@@ -651,8 +651,6 @@ function restartGame() {
 
 initializeGame();
 
-// Keyboard
-
 function createKeyboard() {
   const keyboardContainer = document.getElementById("keyboard-container");
   keyboardContainer.innerHTML = "";
@@ -704,7 +702,6 @@ function handleKeyboardClick(letter) {
 
 document.addEventListener("keydown", handleKeyEvent);
 
-// Help Dialog
 const helpButton = document.querySelector("#btn-help");
 const helpDialog = document.querySelector("#dlg-help");
 const helpClose = document.querySelector("#btn-help-close");
@@ -715,17 +712,4 @@ helpButton.addEventListener("click", () => {
 
 helpClose.addEventListener("click", () => {
   helpDialog.close();
-});
-
-// Config Dialog
-const configButton = document.querySelector("#btn-config");
-const configDialog = document.querySelector("#dlg-config");
-const configClose = document.querySelector("#btn-config-close");
-
-configButton.addEventListener("click", () => {
-  configDialog.showModal();
-});
-
-configClose.addEventListener("click", () => {
-  configDialog.close();
 });
