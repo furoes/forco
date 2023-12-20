@@ -1,16 +1,8 @@
-import { words } from "./words";
-
-let selectedWord, guessedWord, wrongLetters, selectedWordNormalized, maxErrors;
+import { words } from "./words.js";
 
 const { Temporal } = temporal;
 
-const MAX_INT32 = 2147483647;
-
-const epoch = Temporal.PlainDate.from({ year: 2020, month: 1, day: 1 });
-const today = Temporal.Now.instant().toZonedDateTimeISO('UTC').toPlainDate()
-const days = today.since(epoch).days
-
-const random = mulberry32(days)()
+let selectedWord, guessedWord, wrongLetters, selectedWordNormalized, maxErrors;
 
 function initializeGame() {
   selectedWord = chooseRandomWord();
@@ -28,6 +20,13 @@ function initializeGame() {
   document.addEventListener("keydown", handleKeyEvent);
 }
 
+function getDays() {
+  const epoch = Temporal.PlainDate.from({ year: 2020, month: 1, day: 1 });
+  const today = Temporal.Now.instant().toZonedDateTimeISO('UTC').toPlainDate()
+
+  return today.since(epoch).days
+}
+
 function mulberry32(a) {
   return function() {
     var t = a += 0x6D2B79F5;
@@ -38,6 +37,9 @@ function mulberry32(a) {
 }
 
 function chooseRandomWord() {
+  const MAX_INT32 = 2147483647;
+  const random = mulberry32(getDays())()
+
   return words[Math.floor(random * MAX_INT32 %  words.length)];
 }
 
