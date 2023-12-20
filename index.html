@@ -5,15 +5,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forco</title>
-    <script src="main.js" defer></script>
+    <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/@js-temporal/polyfill@0.4.4/dist/index.umd.js" ></script>
+    <script src="main.js" defer></script>
 </head>
 
 <body>
     <header>
-        <h1>Forco</h1>
+        <nav class="navbar">
+            <button id="btn-help" class="key">?</button>
+            <h1 class="title">Forco</h1>
+            <button id="btn-config" class="key">0</button>
+        </nav>
+
         <p>erros: <span id="wrongs"></span></p>
     </header>
+
+    <dialog id="dlg-help" class="dlg">
+        <h2>Ajuda</h2>
+        <p>
+            Bem-vindo ao jogo da forca! Seu objetivo é adivinhar a palavra antes de acabarem as tentativas.
+        </p>
+        <p>
+            Quando uma letra está na palavra, ela é preenchida nos espaços correspondentes e marcada em verde. Se não
+            estiver, é marcada em vermelho.
+        </p>
+        <button autofocus id="btn-help-close" class="key">Fechar</button>
+    </dialog>
+
+    <dialog id="dlg-config" class="dlg">
+        <h2>Configurações</h2>
+
+        <div class="preference">
+            <label for="tentativas">Número de Tentativas:</label>
+            <input type="number" id="tentativas" value="6" min="1" max="10">
+        </div>
+
+        <div class="preference">
+            <label for="dificuldade">Dificuldade:</label>
+            <select id="dificuldade">
+                <option value="facil">Fácil</option>
+                <option value="medio" selected>Médio</option>
+                <option value="dificil">Difícil</option>
+            </select>
+        </div>
+
+        <button id="btn-config-save" class="key">Salvar</button>
+        <button autofocus id="btn-config-close" class="key">Fechar</button>
+    </dialog>
 
     <section id="game-section">
         <div id="word-container"></div>
