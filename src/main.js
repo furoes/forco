@@ -16,8 +16,6 @@ function initializeGame() {
   displayWord();
   showErros();
   createKeyboard();
-
-  document.addEventListener("keydown", handleKeyEvent);
 }
 
 function getDays() {
@@ -102,18 +100,23 @@ function updateGameStatus(letter) {
 }
 
 function endGame() {
+  const keyboardButtons = document.querySelectorAll(
+    "#keyboard-container button"
+  );
+
+  // remove all event listener
+  keyboardButtons.forEach((key) => {
+    const clone = key.cloneNode(true);
+    key.parentNode.replaceChild(clone, key);
+  });
+
   document.removeEventListener("keydown", handleKeyEvent);
-  setTimeout(restartGame, 500);
-}
 
-function restartGame() {
-  const mensagem =
-    guessedWord.join("") === selectedWord
-      ? "Parabéns! Você ganhou!"
-      : `Você perdeu! A palavra era: ${selectedWord}`;
+  // get data
 
-  alert(mensagem);
-  initializeGame();
+
+
+  statsDialog.showModal();
 }
 
 function createKeyboard() {
@@ -126,7 +129,10 @@ function createKeyboard() {
     const button = document.createElement("button");
     button.className = "key";
     button.textContent = letter;
-    button.addEventListener("click", () => handleKeyboardClick(letter));
+
+    const handler = () => handleKeyboardClick(letter)
+
+    button.addEventListener("click", handler);
     keyboardContainer.appendChild(button);
   });
 }
@@ -165,8 +171,6 @@ function handleKeyboardClick(letter) {
   }
 }
 
-document.addEventListener("keydown", handleKeyEvent);
-
 const helpButton = document.querySelector("#btn-help");
 const helpDialog = document.querySelector("#dlg-help");
 const helpClose = document.querySelector("#btn-help-close");
@@ -179,4 +183,18 @@ helpClose.addEventListener("click", () => {
   helpDialog.close();
 });
 
+const statsButton = document.querySelector("#btn-stats");
+const statsDialog = document.querySelector("#dlg-stats");
+const statsClose = document.querySelector("#btn-stats-close");
+
+statsButton.addEventListener("click", () => {
+  statsDialog.showModal();
+});
+
+statsClose.addEventListener("click", () => {
+  statsDialog.close();
+});
+
 initializeGame();
+
+document.addEventListener("keydown", handleKeyEvent);

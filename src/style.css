@@ -10,12 +10,12 @@ body {
 }
 
 .title {
-  font-size: 2em;
+  font-size: 3em;
   color: #333;
 }
 
 #word-container {
-  font-size: 3em;
+  font-size: 2em;
   margin: 20px 0;
 }
 

@@ -17,11 +17,20 @@
         <nav class="navbar">
             <button id="btn-help" class="key">?</button>
             <h1 class="title">Forco</h1>
-            <a href="https://github.com/furoes/forco">github</a>
+            <button id="btn-stats" class="key">.</button>
         </nav>
 
         <p>erros: <span id="wrongs"></span></p>
     </header>
+
+    <dialog id="dlg-stats" class="dlg">
+        <h2>Estatísticas do Jogo</h2>
+        
+        <p>Total de Partidas: <span id="totalPartidas"></span></p>
+        <p>Taxa de Vitórias: <span id="taxaVitorias"></span></p>
+
+        <button autofocus id="btn-stats-close" class="key">Fechar</button>
+    </dialog>
 
     <dialog id="dlg-help" class="dlg">
         <h2>Ajuda</h2>
