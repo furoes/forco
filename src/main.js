@@ -1,65 +1,144 @@
-import { words } from "./words.js";
+import { chooseRandomWord } from "./logic.js";
+import {
+  showErros,
+  displayWord,
+  displayTotalMatches,
+  displayWinrate,
+} from "./ui.js";
 
-const { Temporal } = temporal;
+let selectedWord, guessedWord, selectedWordNormalized;
+let dataGlobal = {
+  wrongLetters: [],
+  rightLetters: [],
+  maxErrors: 8,
+  wins: 0,
+  all: 0,
+  win: false,
+};
 
-let selectedWord, guessedWord, wrongLetters, selectedWordNormalized, maxErrors;
+function normalizeWord(word) {
+  return word.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
 
 function initializeGame() {
+  const data = localStorage.getItem("data") ?? JSON.stringify(dataGlobal);
+  const local = JSON.parse(data);
+
   selectedWord = chooseRandomWord();
   guessedWord = Array.from(selectedWord).map((char) =>
     char === "-" ? char : "_"
   );
-  wrongLetters = [];
   selectedWordNormalized = normalizeWord(selectedWord);
-  maxErrors = 8;
 
-  displayWord();
-  showErros();
+  localStorage.setItem("data", JSON.stringify(local));
+
+  displayTotalMatches(local);
+  displayWinrate(local);
+
+  displayWord(guessedWord);
+  showErros(dataGlobal);
   createKeyboard();
+
+  if (local.win) {
+    endGame();
+  }
 }
 
-function getDays() {
-  const epoch = Temporal.PlainDate.from({ year: 2020, month: 1, day: 1 });
-  const today = Temporal.Now.instant().toZonedDateTimeISO("UTC").toPlainDate();
+function endGame() {
+  disableKeyboard();
 
-  return today.since(epoch).days;
+  const data = localStorage.getItem("data");
+  const local = JSON.parse(data);
+
+  if (!local.win) {
+    local.wins += 1;
+    local.all += 1;
+    local.win = true;
+  }
+
+  localStorage.setItem("data", JSON.stringify(local));
+
+  displayTotalMatches(local);
+  displayWinrate(local);
+
+  const textClipboard = `joguei forco!\nerros: ${8 - dataGlobal.maxErrors}`;
+
+  document.getElementById("btn-share").addEventListener("click", () => {
+    navigator.clipboard.writeText(textClipboard).then(
+      () => {
+        console.log("Async: Copying to clipboard was successful!");
+      },
+      (err) => {
+        console.error("Async: Could not copy text: ", err);
+      }
+    );
+  });
+
+  statsDialog.showModal();
 }
 
-function mulberry32(a) {
-  return function () {
-    var t = (a += 0x6d2b79f5);
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+export function createKeyboard() {
+  const keyboardContainer = document.getElementById("keyboard-container");
+  keyboardContainer.innerHTML = "";
 
-function chooseRandomWord() {
-  const MAX_INT32 = 2147483647;
-  const random = mulberry32(getDays())();
+  const qwerty = "qwertyuiopasdfghjklzxcvbnm";
+  const letters = qwerty.split("");
 
-  return words[Math.floor((random * MAX_INT32) % words.length)];
-}
+  const local = JSON.parse(localStorage.getItem("data"));
 
-function normalizeWord(word) {
-  return word.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  letters.forEach((letter) => {
+    const button = document.createElement("button");
+    button.id = `letter-${letter}`;
+    button.className = "key";
+    button.textContent = letter;
+
+    const handlerClick = () => handleKeyboardClick(letter);
+    button.addEventListener("click", handlerClick);
+
+    keyboardContainer.appendChild(button);
+
+    if (
+      local.rightLetters.includes(letter) ||
+      local.wrongLetters.includes(letter)
+    ) {
+      updateGameStatus(letter);
+      checkLetterPress(letter);
+    }
+  });
 }
 
 function isLetterKey(key) {
   return /^[a-zA-Z]$/.test(key);
 }
 
-function displayElementContent(elementId, content) {
-  const element = document.getElementById(elementId);
-  element.textContent = content;
+function updateGameStatus(letter) {
+  if (
+    !selectedWordNormalized.includes(letter) &&
+    !dataGlobal.wrongLetters.includes(letter)
+  ) {
+    dataGlobal.wrongLetters.push(letter);
+  }
+
+  if (guessedWord.includes(letter)) {
+    return;
+  }
+
+  if (selectedWordNormalized.includes(letter)) {
+    dataGlobal.rightLetters.push(letter);
+  }
+
+  for (let i = 0; i < selectedWordNormalized.length; i++) {
+    if (selectedWordNormalized[i] === letter) {
+      guessedWord[i] = selectedWord[i];
+    }
+  }
+
+  displayWord(guessedWord);
+  showErros(dataGlobal);
 }
 
-function showErros() {
-  displayElementContent("wrongs", maxErrors - wrongLetters.length);
-}
-
-function displayWord() {
-  displayElementContent("word-container", guessedWord.join(" "));
+function updateLocalStorage() {
+  localStorage.setItem("data", JSON.stringify(dataGlobal));
 }
 
 function handleKeyEvent(event) {
@@ -71,88 +150,26 @@ function handleKeyEvent(event) {
 
   updateGameStatus(letter);
   checkLetterPress(letter);
+  updateLocalStorage();
 
   if (
     guessedWord.join("") === selectedWord ||
-    wrongLetters.length === maxErrors
+    dataGlobal.wrongLetters.length === dataGlobal.maxErrors
   ) {
     endGame();
   }
 }
 
-function updateGameStatus(letter) {
-  if (!selectedWord.includes(letter) && !wrongLetters.includes(letter)) {
-    wrongLetters.push(letter);
-  }
-
-  if (guessedWord.includes(letter)) {
-    return;
-  }
-
-  for (let i = 0; i < selectedWordNormalized.length; i++) {
-    if (selectedWordNormalized[i] === letter) {
-      guessedWord[i] = selectedWord[i];
-    }
-  }
-
-  showErros();
-  displayWord();
-}
-
-function endGame() {
-  const keyboardButtons = document.querySelectorAll(
-    "#keyboard-container button"
-  );
-
-  // remove all event listener
-  keyboardButtons.forEach((key) => {
-    const clone = key.cloneNode(true);
-    key.parentNode.replaceChild(clone, key);
-  });
-
-  document.removeEventListener("keydown", handleKeyEvent);
-
-  // get data
-
-
-
-  statsDialog.showModal();
-}
-
-function createKeyboard() {
-  const keyboardContainer = document.getElementById("keyboard-container");
-  keyboardContainer.innerHTML = "";
-
-  const alphabet = "qwertyuiopasdfghjklzxcvbnm";
-
-  alphabet.split("").forEach((letter) => {
-    const button = document.createElement("button");
-    button.className = "key";
-    button.textContent = letter;
-
-    const handler = () => handleKeyboardClick(letter)
-
-    button.addEventListener("click", handler);
-    keyboardContainer.appendChild(button);
-  });
-}
-
 function checkLetterPress(letter) {
-  const keyboardButtons = document.querySelectorAll(
-    "#keyboard-container button"
-  );
+  const buttonLetter = document.getElementById(`letter-${letter}`);
 
-  keyboardButtons.forEach((button) => {
-    if (button.textContent === letter) {
-      if (selectedWordNormalized.includes(letter)) {
-        button.classList.add("correct-letter");
-      } else {
-        button.classList.add("wrong-letter");
-      }
+  if (selectedWordNormalized.includes(letter)) {
+    buttonLetter.classList.add("correct-letter");
+  } else {
+    buttonLetter.classList.add("wrong-letter");
+  }
 
-      button.disabled = true;
-    }
-  });
+  buttonLetter.disabled = true;
 }
 
 function handleKeyboardClick(letter) {
@@ -162,13 +179,27 @@ function handleKeyboardClick(letter) {
 
   updateGameStatus(letter);
   checkLetterPress(letter);
+  updateLocalStorage();
 
   if (
     guessedWord.join("") === selectedWord ||
-    wrongLetters.length === maxErrors
+    dataGlobal.wrongLetters.length === dataGlobal.maxErrors
   ) {
     endGame();
   }
+}
+
+export function disableKeyboard() {
+  const keyboardButtons = document.querySelectorAll(
+    "#keyboard-container button"
+  );
+
+  keyboardButtons.forEach((key) => {
+    const clone = key.cloneNode(true);
+    key.parentNode.replaceChild(clone, key);
+  });
+
+  document.removeEventListener("keydown", handleKeyEvent);
 }
 
 const helpButton = document.querySelector("#btn-help");
